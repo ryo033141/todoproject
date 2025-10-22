@@ -1,0 +1,19 @@
+databases:
+ - name: mysitedb
+   plan: free
+   databaseName: TodoModel
+   user: ryo
+services:
+  - type: web
+    plan: free
+    name: todo
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: "python -m gunicorn todoproject.asgi:application -k uvicorn.workers.UvicornWorker"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: mysitedb
+          property: connectionsString
+      - key: WEB_CONCURRENCY
+        value: 4
